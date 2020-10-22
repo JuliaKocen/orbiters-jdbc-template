@@ -64,9 +64,52 @@ public class OrbiterJdbcTemplateRepositoryTest {
                 .anyMatch(i->i.getOrbiterId() == 1));
 
     }
+    @Test
+    void shouldAdd() throws DataAccessException {
+        Orbiter orbiter = new Orbiter();
+        orbiter.setName("Bob");
+        orbiter.setType(OrbiterType.ASTRONAUT);
+        orbiter.setSponsor("Ford");
 
+        Orbiter actual = repository.add(orbiter);
+        orbiter.setOrbiterId(3);
 
+        assertNotNull(actual);
+        assertEquals(orbiter, actual);
+    }
 
+    @Test
+    void shouldUpdateExisting() throws DataAccessException {
+        Orbiter orbiter = new Orbiter();
+        orbiter.setOrbiterId(1);
+        orbiter.setName("Gabrielle");
+        orbiter.setType(OrbiterType.ASTRONAUT);
+        orbiter.setSponsor("Subaru");
 
+        assertTrue(repository.update(orbiter));
+        assertEquals(orbiter, repository.findById(1));
+    }
 
+    @Test
+    void shouldNotUpdateMissing() throws DataAccessException {
+        Orbiter orbiter = new Orbiter();
+        orbiter.setOrbiterId(10000);
+        orbiter.setName("Fake");
+        orbiter.setType(OrbiterType.ASTRONAUT);
+        orbiter.setSponsor("Fake");
+
+        assertFalse(repository.update(orbiter));
+    }
+
+    @Test
+    void shouldDeleteExisting() throws DataAccessException {
+        assertTrue(repository.deleteById(2));
+    }
+
+    @Test
+    void shouldNotDeleteMissing() throws DataAccessException {
+        assertFalse(repository.deleteById(40000));
+    }
 }
+
+

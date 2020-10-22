@@ -50,16 +50,42 @@ public class OrbiterJdbcTemplateRepository implements OrbiterRepository {
 
     @Override
     public Orbiter add(Orbiter orbiter) throws DataAccessException {
-        return null;
+        final String sql = "insert into orbiter (`name`, `type`, sponsor) values (?,?,?);";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        int rowsAffected = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, orbiter.getName());
+            ps.setString(2, String.valueOf(orbiter.getType()));
+            ps.setString(3, orbiter.getSponsor());
+            return ps;
+        }, keyHolder);
+
+        if (rowsAffected <= 0) {
+            return null;
+        }
+
+        orbiter.setOrbiterId(keyHolder.getKey().intValue());
+        return orbiter;
     }
 
     @Override
     public boolean update(Orbiter orbiter) throws DataAccessException {
-        return false;
+        final String sql = "update orbiter set "
+                + "`name` = ?, "
+                + "`type` = ? "
+                + "sponsor = ? "
+                + "where orbiter_id = ?;";
+
+        int rowsUpdated = jdbcTemplate.update(sql,
+                orbiter.getName(), orbiter.getType(), orbiter.getSponsor(), orbiter.getOrbiterId());
+
+        return rowsUpdated > 0;
     }
 
     @Override
     public boolean deleteById(int orbiterId) throws DataAccessException {
-        return false;
+        final String sql = "delete from pet where orbiter_id = ?;";
+        return jdbcTemplate.update(sql, orbiterId) > 0;
     }
 }
