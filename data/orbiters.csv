@@ -1,0 +1,10 @@
+orbiterId,name,type,sponsor
+1,B1,MODULE,Tesla
+2,Julia,MODULE_WITH_DOCK,Julia
+3,Test Shuttle,SHUTTLE,Test Sponsor
+4,Celestyn Kamien,ASTRONAUT,Celestyn
+5,Caresse,VENUSIAN,
+6,j,ASTRONAUT,dj
+7,j,MODULE,f
+8,k,VENUSIAN,b
+9,j,MODULE,k
