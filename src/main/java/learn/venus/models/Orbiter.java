@@ -66,4 +66,17 @@ public class Orbiter {
     public int hashCode() {
         return Objects.hash(orbiterId, name, type, sponsor);
     }
+
+    @Override
+    public String toString() {
+        return "Orbiter{" +
+                "orbiterId=" + orbiterId +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", sponsor= "+ sponsor + '\'' +
+                '}';
+    }
+
+
+
 }

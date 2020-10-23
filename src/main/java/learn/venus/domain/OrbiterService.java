@@ -4,11 +4,13 @@ import learn.venus.data.DataAccessException;
 import learn.venus.data.OrbiterRepository;
 import learn.venus.models.Orbiter;
 import learn.venus.models.OrbiterType;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class OrbiterService {
 
     private final OrbiterRepository repository;
@@ -21,11 +23,14 @@ public class OrbiterService {
         return repository.findByType(type);
     }
 
-    //add
-    //can't be null
-    //name required
-    //module == 4 astro
-    //module with dock == 2 astro, 1 shuttle
+    public List<Orbiter> findAll() throws DataAccessException {
+        return repository.findAll();
+    }
+
+    public Orbiter findById(int orbiterId) throws DataAccessException {
+        return repository.findById(orbiterId);
+    }
+
 
     public OrbiterResult add (Orbiter orbiter) throws DataAccessException {
         OrbiterResult result = validateInputs(orbiter);
@@ -33,77 +38,105 @@ public class OrbiterService {
             return result;
         }
 
-
-        Map<OrbiterType, Integer> counts = countTypes();
-        counts.put(orbiter.getType(), counts.get(orbiter.getType()) +1 );
-        result = validateDomain(counts);
-        if(!result.isSuccess()) {
-            return result;
-        }
+//        Map<OrbiterType, Integer> counts = countTypes();
+//        counts.put(orbiter.getType(), counts.get(orbiter.getType()) +1 );
+//        result = validateDomain(counts);
+//        if(!result.isSuccess()) {
+//            return result;
+//        }
 
         Orbiter o = repository.add(orbiter);
         result.setPayload(o);
-
         return result;
     }
 
     public OrbiterResult update(Orbiter orbiter) throws DataAccessException {
-        OrbiterResult result = validateInputs(orbiter);
-        if(!result.isSuccess()) {
-            return result;
-        }
-        Orbiter existing = repository.findById(orbiter.getOrbiterId());
-        if(existing == null){
-            result.addErrorMessage("Orbiter Id " + orbiter.getOrbiterId() + " not found.");
+
+        OrbiterResult<Orbiter> result = validateInputs(orbiter);
+        if (result.getType() != ResultType.SUCCESS) {
             return result;
         }
 
-        if(existing.getType() != orbiter.getType()) {
-            result.addErrorMessage("Cannot update type.");
-            return result;
+        if (!repository.update(orbiter)) {
+            result.addMessage("orbiter id " + orbiter.getOrbiterId() + " not found", ResultType.NOT_FOUND);
         }
-
-        boolean success = repository.update(orbiter);
-        if (!success) {
-            result.addErrorMessage("Could not find Orbiter Id " + orbiter.getOrbiterId());
-        }
-
         return result;
+//        OrbiterResult result = validateInputs(orbiter);
+//        if(!result.isSuccess()) {
+//            return result;
+//        }
+//        Orbiter existing = repository.findById(orbiter.getOrbiterId());
+//        if(existing == null){
+//            result.addErrorMessage("Orbiter Id " + orbiter.getOrbiterId() + " not found.");
+//            return result;
+//        }
+//
+//        if(existing.getType() != orbiter.getType()) {
+//            result.addErrorMessage("Cannot update type.");
+//            return result;
+//        }
+//
+//        boolean success = repository.update(orbiter);
+//        if (!success) {
+//            result.addErrorMessage("Could not find Orbiter Id " + orbiter.getOrbiterId());
+//        }
+//
+//        return result;
     }
 
-    public OrbiterResult deleteById(int orbiterId) throws DataAccessException {
-        OrbiterResult result = new OrbiterResult();
+//    public OrbiterResult deleteById(int orbiterId) throws DataAccessException {
+//        OrbiterResult result = new OrbiterResult();
+//
+//        Orbiter orbiter = repository.findById(orbiterId);
+//        if(orbiter == null){
+//            result.addErrorMessage("Could not find Orbiter Id " + orbiter);
+//            return result;
+//        }
+//        Map<OrbiterType, Integer> counts = countTypes();
+//        counts.put(orbiter.getType(), counts.get(orbiter.getType()) - 1 );
+//        result = validateDomain(counts);
+//        if (!result.isSuccess()){
+//            return result;
+//        }
+//
+//        boolean success = repository.deleteById(orbiterId);
+//        if(!success){
+//            result.addErrorMessage("Could not find Orbiter Id " + orbiter);
+//        }
+//        return result;
+//    }
 
-        Orbiter orbiter = repository.findById(orbiterId);
-        if(orbiter == null){
-            result.addErrorMessage("Could not find Orbiter Id " + orbiter);
-            return result;
-        }
-        Map<OrbiterType, Integer> counts = countTypes();
-        counts.put(orbiter.getType(), counts.get(orbiter.getType()) - 1 );
-        result = validateDomain(counts);
-        if (!result.isSuccess()){
-            return result;
-        }
-
-        boolean success = repository.deleteById(orbiterId);
-        if(!success){
-            result.addErrorMessage("Could not find Orbiter Id " + orbiter);
-        }
-        return result;
+    public boolean deleteById(int orbiterId) throws DataAccessException {
+        return repository.deleteById(orbiterId);
     }
 
     private OrbiterResult validateInputs(Orbiter orbiter){
         OrbiterResult result = new OrbiterResult();
 
-        if(orbiter == null){
-            result.addErrorMessage("orbiter cannot be null");
+        if (orbiter == null) {
+            result.addMessage("orbiter cannot be null", ResultType.INVALID);
             return result;
         }
 
-        if (orbiter.getName() == null || orbiter.getName().trim().length()==0){
-            result.addErrorMessage("name is required");
+        if (orbiter.getName() == null || orbiter.getName().trim().length() == 0) {
+            result.addMessage("name is required", ResultType.INVALID);
         }
+
+        if (orbiter.getType() == null ) {
+            result.addMessage("type is required", ResultType.INVALID);
+        }
+
+        if (orbiter.getSponsor() == null || orbiter.getSponsor().trim().length() == 0) {
+            result.addMessage("sponsor is required", ResultType.INVALID);
+        }
+//        if(orbiter == null){
+//            result.addErrorMessage("orbiter cannot be null");
+//            return result;
+//        }
+//
+//        if (orbiter.getName() == null || orbiter.getName().trim().length()==0){
+//            result.addErrorMessage("name is required");
+//        }
         return result;
     }
 
@@ -164,3 +197,5 @@ public class OrbiterService {
     }
 
 }
+
+//DONE?

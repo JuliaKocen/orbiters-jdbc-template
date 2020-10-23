@@ -3,6 +3,9 @@ package learn.venus.data;
 import learn.venus.models.Orbiter;
 import learn.venus.models.OrbiterType;
 import com.mysql.cj.jdbc.MysqlDataSource;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,19 +14,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrbiterJdbcRepository {
+
+@Repository
+@Profile("jdbc")
+public class OrbiterJdbcRepository implements OrbiterRepository{
     private DataSource dataSource = initDataSource();
 
     private DataSource initDataSource() {
         MysqlDataSource result = new MysqlDataSource();
-        // 2. connection string is:
-        // [db-tech]:[db-vendor]://[host]:[port]/[database-name]
+        // connection string is: [db-tech]:[db-vendor]://[host]:[port]/[database-name]
         result.setUrl("jdbc:mysql://localhost:3306/orbiters"); //jdbc:mysql://localhost:3306/pets
-        // 3. username
         result.setUser("root"); //your-username-here
-        // 4. password
         result.setPassword("top-secret-password");
-
         return result;
     }
 
@@ -56,9 +58,31 @@ public class OrbiterJdbcRepository {
         return result;
     }
 
+    @Override
+    public Orbiter findById(int orbiterId) throws DataAccessException {
+        return null;
+    }
 
+    @Override
+    public List<Orbiter> findByType(OrbiterType type) throws DataAccessException {
+        return null;
+    }
 
+    @Override
+    public Orbiter add(Orbiter orbiter) throws DataAccessException {
+        return null;
+    }
 
+    @Override
+    public boolean update(Orbiter orbiter) throws DataAccessException {
+        return false;
+    }
+
+    @Override
+    public boolean deleteById(int orbiterId) throws DataAccessException {
+        return false;
+    }
 
 
 }
+//NOT DONE? - add, update, delete...

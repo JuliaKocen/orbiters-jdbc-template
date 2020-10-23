@@ -2,6 +2,7 @@ package learn.venus.data;
 
 import learn.venus.models.Orbiter;
 import learn.venus.models.OrbiterType;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,6 +15,7 @@ import java.sql.Statement;
 import java.util.List;
 
 @Repository
+@Profile("jdbc-template") // NEW ANNOTATION
 public class OrbiterJdbcTemplateRepository implements OrbiterRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -73,19 +75,19 @@ public class OrbiterJdbcTemplateRepository implements OrbiterRepository {
     public boolean update(Orbiter orbiter) throws DataAccessException {
         final String sql = "update orbiter set "
                 + "`name` = ?, "
-                + "`type` = ? "
+                + "`type` = ?, "
                 + "sponsor = ? "
                 + "where orbiter_id = ?;";
 
         int rowsUpdated = jdbcTemplate.update(sql,
-                orbiter.getName(), orbiter.getType(), orbiter.getSponsor(), orbiter.getOrbiterId());
+                orbiter.getName(), orbiter.getType(), orbiter.getSponsor(), orbiter.getOrbiterId()); //FIX
 
         return rowsUpdated > 0;
     }
 
     @Override
     public boolean deleteById(int orbiterId) throws DataAccessException {
-        final String sql = "delete from pet where orbiter_id = ?;";
+        final String sql = "delete from orbiter where orbiter_id = ?;";
         return jdbcTemplate.update(sql, orbiterId) > 0;
     }
 }

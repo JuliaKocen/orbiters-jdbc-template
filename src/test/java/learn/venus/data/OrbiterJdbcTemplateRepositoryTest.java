@@ -83,6 +83,7 @@ public class OrbiterJdbcTemplateRepositoryTest {
         Orbiter orbiter = new Orbiter();
         orbiter.setOrbiterId(1);
         orbiter.setName("Gabrielle");
+        //orbiter.setType(OrbiterType.valueOf("ASTRONAUT"));
         orbiter.setType(OrbiterType.ASTRONAUT);
         orbiter.setSponsor("Subaru");
 
@@ -112,4 +113,4 @@ public class OrbiterJdbcTemplateRepositoryTest {
     }
 }
 
-
+//DONE- But not all passing
